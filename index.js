@@ -51,13 +51,15 @@ document.getElementById('nameTagForm').addEventListener('submit', function(event
         var nameTagXML = document.getElementById('nameTagTemplate')
         nameTagXML.innerHTML = dymo_print_xml;
 
-        // Create a new window to display the name tag
-        var nameTagWindow = window.open('', '_blank');
-        nameTagWindow.document.write(nameTagXML);
-        nameTagWindow.document.close();
+        printLabel(dymo_print_xml);
 
-        // Print the name tag
-        nameTagWindow.print();
+        // // Create a new window to display the name tag
+        // var nameTagWindow = window.open('', '_blank');
+        // nameTagWindow.document.write(nameTagXML);
+        // nameTagWindow.document.close();
+
+        // // Print the name tag
+        // nameTagWindow.print();
       } else {
         alert('Email not found in the CSV file.');
       }
@@ -67,6 +69,20 @@ document.getElementById('nameTagForm').addEventListener('submit', function(event
     });
 });
 
+function printLabel(xml) {
+  try {
+    var label = dymo.label.framework.openLabelXml(xml);
+    var printers = dymo.label.framework.getPrinters();
+    if (printers.length === 0) {
+      alert('No DYMO printers found.');
+      return;
+    }
+    var printerName = printers[0].name; // Use the first printer found
+    label.print(printerName);
+  } catch (e) {
+    alert('Error printing label: ' + e.message);
+  }
+}
 
 var dymo_print_xml = `
 <?xml version="1.0" encoding="utf-8"?>

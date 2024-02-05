@@ -1,0 +1,77 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  margin-top: 50px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  /* border: 1px solid #ccc; */
+}
+
+form {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  margin: 5px;
+  width: 100%;
+}
+
+label {
+  margin-right: 10px;
+}
+
+.identifier {
+  padding: 8px;
+  font-size: 1rem;
+  margin: 5px;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.print-button {
+  width: 3.5rem;
+  height: 2rem;
+  margin: 5px;
+  padding: 0.2rem 0.1rem 0.1rem;
+  border-radius: 5px;
+  background-color: #007bff;
+  font-size: 0.9rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.print-button:hover {
+  background-color: #0056b3;
+  
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: end;
+  position: fixed;
+  bottom: 0%;
+  width: 100%;
+  left: 0;
+}
+
+.njit-logo {
+  width: 20%;
+  margin: 5px;
+  /* border: 1px solid #ccc; */
+  border-radius: 5px;
+  padding: 0.1rem;
+}
+.form-container {
+  display: flex;
+  align-items: start;
+}
+.footer-text {
+  margin: 15px;
+}

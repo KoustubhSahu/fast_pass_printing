@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Name Tag Printing</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Fast Tag Printing</h1>
+    <div class="form-container">
+      <img class="njit-logo"
+        src="https://futuretechnologies.njit.edu/sites/futuretechnologies/files/njit%20logo_0.png"></img>
+      <form id="nameTagForm">
+        <input class="identifier" type="text" id="email" name="email" placeholder="ucid@njit.edu">
+        <button class="print-button" type="submit">Print</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- XML template for name tag -->
+  <textarea id="nameTagTemplate" style="display: none;">
+    <!-- Your XML template goes here -->
+    
+  </textarea>
+
+  <script src="index.js"></script>
+</body>
+<footer>
+  <div class="footer-text">
+    NJIT Career Development Services
+  </div> 
+</footer>
+
+</html>

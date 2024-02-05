@@ -9,9 +9,21 @@ let MAJOR = ""
 document.getElementById('nameTagForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
-  // Get the email input value
-  var studentIdentifier = document.getElementById('email').value.trim();
+// Get the email input value
+var studentIdentifier = document.getElementById('email').value.trim();
 
+  let test = true;
+
+if (test) {
+  console.log("this is a test");
+  FIRST_NAME = "Koustubh";
+  LAST_NAME = "Sahu";
+  MAJOR = "Computer Science";
+
+  printLabel(dymo_print_xml);
+}
+
+else {
   // Read the CSV file
   fetch(csv_file_name)
     .then(response => response.text())
@@ -37,36 +49,22 @@ document.getElementById('nameTagForm').addEventListener('submit', function(event
 
       // Print name tag if data found
       if (rowData) {
-        var firstName = rowData[firstNameIndex];
-        var lastName = rowData[lastNameIndex];
-        var major = rowData[majorIndex];
-
-        // // Replace placeholders in XML template with data
-        // var nameTagXML = document.getElementById('nameTagTemplate').value
-        //   .replace('{{FIRST_NAME}}', firstName)
-        //   .replace('{{LAST_NAME}}', lastName)
-        //   .replace('{{MAJOR}}', major);
-
-        // Appending the xml code for printing
-        var nameTagXML = document.getElementById('nameTagTemplate')
-        nameTagXML.innerHTML = dymo_print_xml;
+        FIRST_NAME = rowData[firstNameIndex];
+        LAST_NAME = rowData[lastNameIndex];
+        MAJOR = rowData[majorIndex];
 
         printLabel(dymo_print_xml);
-
-        // // Create a new window to display the name tag
-        // var nameTagWindow = window.open('', '_blank');
-        // nameTagWindow.document.write(nameTagXML);
-        // nameTagWindow.document.close();
-
-        // // Print the name tag
-        // nameTagWindow.print();
-      } else {
+      } 
+      else {
         alert('Email not found in the CSV file.');
       }
     })
     .catch(error => {
       console.error('Error fetching data:', error);
     });
+}
+  
+
 });
 
 function printLabel(xml) {

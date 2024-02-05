@@ -78,7 +78,7 @@ function printLabel(xml) {
       return;
     }
     var printerName = printers[0].name; // Use the first printer found
-    label.print(printerName);
+    label.print(printerName, '', '');
   } catch (e) {
     alert('Error printing label: ' + e.message);
   }

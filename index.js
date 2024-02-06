@@ -54,6 +54,7 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
           LAST_NAME = rowData[lastNameIndex];
           MAJOR = rowData[majorIndex];
 
+          let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
           printLabel(dymo_print_xml);
         }
         else {

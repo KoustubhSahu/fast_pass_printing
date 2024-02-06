@@ -46,6 +46,9 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
         var lastNameIndex = headers.indexOf(lastName);
         var majorIndex = headers.indexOf(major);
 
+        console.log(`emailIndex = ${emailIndex} & ucidIndex = ${ucidIndex}`);
+        console.log(`length of the csv file is ${rows.length}`);
+
         // Find the row with the matching email
         var rowData;
         for (var i = 1; i < rows.length; i++) {

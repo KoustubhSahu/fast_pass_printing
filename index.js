@@ -98,8 +98,8 @@ function printLabel(xml) {
   }
 }
 
-// function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
-function getXML() {
+
+function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
   let xml =  `<?xml version="1.0" encoding="utf-8"?>
 <DesktopLabel Version="1">
   <DYMOLabel Version="3">

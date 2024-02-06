@@ -1,4 +1,4 @@
-//Definenig the csv file name
+//Definenig the csv file nameMAJOR
 let csv_file_name = "./demoData.csv"
 
 // Defining Variables for Name and Major
@@ -6,71 +6,74 @@ let FIRST_NAME = ""
 let LAST_NAME = ""
 let MAJOR = ""
 
-document.getElementById('nameTagForm').addEventListener('submit', function(event) {
+document.getElementById('nameTagForm').addEventListener('submit', function (event) {
   event.preventDefault();
 
-// Get the email input value
-var studentIdentifier = document.getElementById('email').value.trim();
+  // Get the email input value
+  var studentIdentifier = document.getElementById('email').value.trim();
 
-  let test = true;
+  let test = false;
 
-if (test) {
-  console.log("this is a test");
-  FIRST_NAME = "Koustubh";
-  LAST_NAME = "Sahu";
-  MAJOR = "Computer Science";
+  if (test) {
+    console.log("this is a test");
+    FIRST_NAME = "Koustubh";
+    LAST_NAME = "Sahu";
+    MAJOR = "Computer Science";
 
-  printLabel(dymo_print_xml);
-}
+    let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
+    printLabel(dymo_print_xml);
+  }
 
-else {
-  // Read the CSV file
-  fetch(csv_file_name)
-    .then(response => response.text())
-    .then(data => {
-      // Parse CSV data
-      var rows = data.split('\n');
-      var headers = rows[0].split(',');
-      var emailIndex = headers.indexOf('Email');
-      var ucidIndex = headers.indexOf('UCID');
-      var firstNameIndex = headers.indexOf('FirstName');
-      var lastNameIndex = headers.indexOf('LastName');
-      var majorIndex = headers.indexOf('Major');
+  else { //start here 
+    // Read the CSV file
+    fetch(csv_file_name)
+      .then(response => response.text())
+      .then(data => {
+        // Parse CSV data
+        var rows = data.split('\n');
+        var headers = rows[0].split(',');
+        var emailIndex = headers.indexOf('Email');
+        var ucidIndex = headers.indexOf('UCID');
+        var firstNameIndex = headers.indexOf('FirstName');
+        var lastNameIndex = headers.indexOf('LastName');
+        var majorIndex = headers.indexOf('Major');
 
-      // Find the row with the matching email
-      var rowData;
-      for (var i = 1; i < rows.length; i++) {
-        var row = rows[i].split(',');
-        if ((row[emailIndex].trim() === studentIdentifier) || (row[ucidIndex].trim() === studentIdentifier)) {
-          rowData = row;
-          break;
+        // Find the row with the matching email
+        var rowData;
+        for (var i = 1; i < rows.length; i++) {
+          var row = rows[i].split(',');
+          if ((row[emailIndex].trim() === studentIdentifier) || (row[ucidIndex].trim() === studentIdentifier)) {
+            rowData = row;
+            break;
+          }
         }
-      }
 
-      // Print name tag if data found
-      if (rowData) {
-        FIRST_NAME = rowData[firstNameIndex];
-        LAST_NAME = rowData[lastNameIndex];
-        MAJOR = rowData[majorIndex];
+        // Print name tag if data found
+        if (rowData) {
+          FIRST_NAME = rowData[firstNameIndex];
+          LAST_NAME = rowData[lastNameIndex];
+          MAJOR = rowData[majorIndex];
 
-        printLabel(dymo_print_xml);
-      } 
-      else {
-        alert('Email not found in the CSV file.');
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
-}
-  
+          printLabel(dymo_print_xml);
+        }
+        else {
+          alert('Email not found in the CSV file.');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  } // ends here
+
 
 });
 
 function printLabel(xml) {
   try {
     var label = dymo.label.framework.openLabelXml(xml);
+    console.log(label)
     var printers = dymo.label.framework.getPrinters();
+    console.log(printers);
     if (printers.length === 0) {
       alert('No DYMO printers found.');
       return;
@@ -78,12 +81,14 @@ function printLabel(xml) {
     var printerName = printers[0].name; // Use the first printer found
     label.print(printerName, '', '');
   } catch (e) {
+    console.log(e);
     alert('Error printing label: ' + e.message);
   }
 }
 
-var dymo_print_xml = `
-<?xml version="1.0" encoding="utf-8"?>
+// function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
+function getXML() {
+  let xml =  `<?xml version="1.0" encoding="utf-8"?>
 <DesktopLabel Version="1">
   <DYMOLabel Version="3">
     <Description>DYMO Label</Description>
@@ -112,7 +117,7 @@ var dymo_print_xml = `
       <RotationBehavior>ClearObjects</RotationBehavior>
       <LabelObjects>
         <TextObject>
-          <Name>Fast-Pass</Name>
+          <Name>TextObject0</Name>
           <Brushes>
             <BackgroundBrush>
               <SolidColorBrush>
@@ -126,7 +131,7 @@ var dymo_print_xml = `
             </BorderBrush>
             <StrokeBrush>
               <SolidColorBrush>
-                <Color A="1" R="1" G="1" B="1"></Color>
+                <Color A="1" R="0" G="0" B="0"></Color>
               </SolidColorBrush>
             </StrokeBrush>
             <FillBrush>
@@ -155,8 +160,8 @@ var dymo_print_xml = `
               <TextSpan>
                 <Text>Fast-Pass</Text>
                 <FontInfo>
-                  <FontName>Helvetica</FontName>
-                  <FontSize>21.7</FontSize>
+                  <FontName>Segoe UI</FontName>
+                  <FontSize>21.8</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>True</IsUnderline>
@@ -171,21 +176,21 @@ var dymo_print_xml = `
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.2533333</X>
-              <Y>0.1388889</Y>
+              <X>0.2433333</X>
+              <Y>0.06666666</Y>
             </DYMOPoint>
             <Size>
-              <Width>1.319444</Width>
-              <Height>0.4166667</Height>
+              <Width>1.322084</Width>
+              <Height>0.4312501</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
         <TextObject>
-          <Name>FirstName</Name>
+          <Name>TextObject1</Name>
           <Brushes>
             <BackgroundBrush>
               <SolidColorBrush>
-                <Color A="0" R="1" G="1" B="1"></Color>
+                <Color A="0" R="0" G="0" B="0"></Color>
               </SolidColorBrush>
             </BackgroundBrush>
             <BorderBrush>
@@ -222,10 +227,10 @@ var dymo_print_xml = `
             <IsVertical>False</IsVertical>
             <LineTextSpan>
               <TextSpan>
-                <Text>${FIRST_NAME}</Text>
+                <Text>FIRST_NAME</Text>
                 <FontInfo>
-                  <FontName>Helvetica</FontName>
-                  <FontSize>40</FontSize>
+                  <FontName>Segoe UI</FontName>
+                  <FontSize>40.7</FontSize>
                   <IsBold>True</IsBold>
                   <IsItalic>False</IsItalic>
                   <IsUnderline>False</IsUnderline>
@@ -240,150 +245,150 @@ var dymo_print_xml = `
           </FormattedText>
           <ObjectLayout>
             <DYMOPoint>
-              <X>0.2533333</X>
-              <Y>0.5555556</Y>
-            </DYMOPoint>
-            <Size>
-              <Width>3.569444</Width>
-              <Height>0.743056</Height>
-            </Size>
-          </ObjectLayout>
-        </TextObject>
-        <TextObject>
-          <Name>LastName</Name>
-          <Brushes>
-            <BackgroundBrush>
-              <SolidColorBrush>
-                <Color A="0" R="1" G="1" B="1"></Color>
-              </SolidColorBrush>
-            </BackgroundBrush>
-            <BorderBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </BorderBrush>
-            <StrokeBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </StrokeBrush>
-            <FillBrush>
-              <SolidColorBrush>
-                <Color A="0" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </FillBrush>
-          </Brushes>
-          <Rotation>Rotation0</Rotation>
-          <OutlineThickness>1</OutlineThickness>
-          <IsOutlined>False</IsOutlined>
-          <BorderStyle>SolidLine</BorderStyle>
-          <Margin>
-            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
-          </Margin>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <FitMode>AlwaysFit</FitMode>
-          <IsVertical>False</IsVertical>
-          <FormattedText>
-            <FitMode>AlwaysFit</FitMode>
-            <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Middle</VerticalAlignment>
-            <IsVertical>False</IsVertical>
-            <LineTextSpan>
-              <TextSpan>
-                <Text>${LAST_NAME}</Text>
-                <FontInfo>
-                  <FontName>Helvetica</FontName>
-                  <FontSize>20.2</FontSize>
-                  <IsBold>False</IsBold>
-                  <IsItalic>False</IsItalic>
-                  <IsUnderline>False</IsUnderline>
-                  <FontBrush>
-                    <SolidColorBrush>
-                      <Color A="1" R="0" G="0" B="0"></Color>
-                    </SolidColorBrush>
-                  </FontBrush>
-                </FontInfo>
-              </TextSpan>
-            </LineTextSpan>
-          </FormattedText>
-          <ObjectLayout>
-            <DYMOPoint>
-              <X>0.2533333</X>
-              <Y>1.220104</Y>
-            </DYMOPoint>
-            <Size>
-              <Width>3.569444</Width>
-              <Height>0.3750002</Height>
-            </Size>
-          </ObjectLayout>
-        </TextObject>
-        <TextObject>
-          <Name>Major</Name>
-          <Brushes>
-            <BackgroundBrush>
-              <SolidColorBrush>
-                <Color A="0" R="1" G="1" B="1"></Color>
-              </SolidColorBrush>
-            </BackgroundBrush>
-            <BorderBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </BorderBrush>
-            <StrokeBrush>
-              <SolidColorBrush>
-                <Color A="1" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </StrokeBrush>
-            <FillBrush>
-              <SolidColorBrush>
-                <Color A="0" R="0" G="0" B="0"></Color>
-              </SolidColorBrush>
-            </FillBrush>
-          </Brushes>
-          <Rotation>Rotation0</Rotation>
-          <OutlineThickness>1</OutlineThickness>
-          <IsOutlined>False</IsOutlined>
-          <BorderStyle>SolidLine</BorderStyle>
-          <Margin>
-            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
-          </Margin>
-          <HorizontalAlignment>Center</HorizontalAlignment>
-          <VerticalAlignment>Middle</VerticalAlignment>
-          <FitMode>AlwaysFit</FitMode>
-          <IsVertical>False</IsVertical>
-          <FormattedText>
-            <FitMode>AlwaysFit</FitMode>
-            <HorizontalAlignment>Center</HorizontalAlignment>
-            <VerticalAlignment>Middle</VerticalAlignment>
-            <IsVertical>False</IsVertical>
-            <LineTextSpan>
-              <TextSpan>
-                <Text>${MAJOR}</Text>
-                <FontInfo>
-                  <FontName>Helvetica</FontName>
-                  <FontSize>30.6</FontSize>
-                  <IsBold>False</IsBold>
-                  <IsItalic>False</IsItalic>
-                  <IsUnderline>False</IsUnderline>
-                  <FontBrush>
-                    <SolidColorBrush>
-                      <Color A="1" R="0" G="0" B="0"></Color>
-                    </SolidColorBrush>
-                  </FontBrush>
-                </FontInfo>
-              </TextSpan>
-            </LineTextSpan>
-          </FormattedText>
-          <ObjectLayout>
-            <DYMOPoint>
               <X>0.2433333</X>
-              <Y>1.5625</Y>
+              <Y>0.4529158</Y>
             </DYMOPoint>
             <Size>
-              <Width>3.607911</Width>
-              <Height>0.5694445</Height>
+              <Width>3.696667</Width>
+              <Height>0.7541674</Height>
+            </Size>
+          </ObjectLayout>
+        </TextObject>
+        <TextObject>
+          <Name>TextObject2</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation0</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <HorizontalAlignment>Center</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
+          <FitMode>AlwaysFit</FitMode>
+          <IsVertical>False</IsVertical>
+          <FormattedText>
+            <FitMode>AlwaysFit</FitMode>
+            <HorizontalAlignment>Center</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
+            <IsVertical>False</IsVertical>
+            <LineTextSpan>
+              <TextSpan>
+                <Text>LAST_NAME</Text>
+                <FontInfo>
+                  <FontName>Segoe UI</FontName>
+                  <FontSize>22.8</FontSize>
+                  <IsBold>False</IsBold>
+                  <IsItalic>False</IsItalic>
+                  <IsUnderline>False</IsUnderline>
+                  <FontBrush>
+                    <SolidColorBrush>
+                      <Color A="1" R="0" G="0" B="0"></Color>
+                    </SolidColorBrush>
+                  </FontBrush>
+                </FontInfo>
+              </TextSpan>
+            </LineTextSpan>
+          </FormattedText>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>0.2333333</X>
+              <Y>1.102917</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>3.676667</Width>
+              <Height>0.4233346</Height>
+            </Size>
+          </ObjectLayout>
+        </TextObject>
+        <TextObject>
+          <Name>TextObject3</Name>
+          <Brushes>
+            <BackgroundBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BackgroundBrush>
+            <BorderBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </BorderBrush>
+            <StrokeBrush>
+              <SolidColorBrush>
+                <Color A="1" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </StrokeBrush>
+            <FillBrush>
+              <SolidColorBrush>
+                <Color A="0" R="0" G="0" B="0"></Color>
+              </SolidColorBrush>
+            </FillBrush>
+          </Brushes>
+          <Rotation>Rotation0</Rotation>
+          <OutlineThickness>1</OutlineThickness>
+          <IsOutlined>False</IsOutlined>
+          <BorderStyle>SolidLine</BorderStyle>
+          <Margin>
+            <DYMOThickness Left="0" Top="0" Right="0" Bottom="0" />
+          </Margin>
+          <HorizontalAlignment>Center</HorizontalAlignment>
+          <VerticalAlignment>Middle</VerticalAlignment>
+          <FitMode>AlwaysFit</FitMode>
+          <IsVertical>False</IsVertical>
+          <FormattedText>
+            <FitMode>AlwaysFit</FitMode>
+            <HorizontalAlignment>Center</HorizontalAlignment>
+            <VerticalAlignment>Middle</VerticalAlignment>
+            <IsVertical>False</IsVertical>
+            <LineTextSpan>
+              <TextSpan>
+                <Text>MAJOR</Text>
+                <FontInfo>
+                  <FontName>Segoe UI</FontName>
+                  <FontSize>30</FontSize>
+                  <IsBold>False</IsBold>
+                  <IsItalic>False</IsItalic>
+                  <IsUnderline>False</IsUnderline>
+                  <FontBrush>
+                    <SolidColorBrush>
+                      <Color A="1" R="0" G="0" B="0"></Color>
+                    </SolidColorBrush>
+                  </FontBrush>
+                </FontInfo>
+              </TextSpan>
+            </LineTextSpan>
+          </FormattedText>
+          <ObjectLayout>
+            <DYMOPoint>
+              <X>0.2333333</X>
+              <Y>1.519584</Y>
+            </DYMOPoint>
+            <Size>
+              <Width>3.706668</Width>
+              <Height>0.5604162</Height>
             </Size>
           </ObjectLayout>
         </TextObject>
@@ -395,5 +400,10 @@ var dymo_print_xml = `
     <Columns></Columns>
     <Rows></Rows>
   </DataTable>
-</DesktopLabel>
-`
+</DesktopLabel>`;
+
+xml = xml.replace("FIRST_NAME", FIRST_NAME).replace("LAST_NAME", LAST_NAME).replace("MAJOR", MAJOR);
+
+return xml;
+
+}

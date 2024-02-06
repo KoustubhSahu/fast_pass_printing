@@ -1,18 +1,20 @@
 //Definenig the csv file nameMAJOR
 let csv_file_name = "./demoData.csv"
 
-// Defining Variables for Name and Major
-let FIRST_NAME = ""
-let LAST_NAME = ""
-let MAJOR = ""
+
 
 document.getElementById('nameTagForm').addEventListener('submit', function (event) {
   event.preventDefault();
 
+  // Defining Variables for Name and Major
+  let FIRST_NAME = ""
+  let LAST_NAME = ""
+  let MAJOR = ""
+
   // Get the email input value
   var studentIdentifier = document.getElementById('email').value.trim();
 
-  let test = true;
+  let test = false;
 
   if (test) {
     console.log("this is a test");
@@ -53,7 +55,7 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
           FIRST_NAME = rowData[firstNameIndex];
           LAST_NAME = rowData[lastNameIndex];
           MAJOR = rowData[majorIndex];
-
+          console.log(`Fname: ${FIRST_NAME}, lName: ${LAST_NAME}, major: ${MAJOR}`);
           let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
           printLabel(dymo_print_xml);
         }

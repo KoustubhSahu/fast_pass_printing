@@ -12,7 +12,7 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
   // Get the email input value
   var studentIdentifier = document.getElementById('email').value.trim();
 
-  let test = false;
+  let test = true;
 
   if (test) {
     console.log("this is a test");

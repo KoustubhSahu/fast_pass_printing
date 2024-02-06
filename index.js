@@ -2,7 +2,7 @@
 let csv_file_name = "./demoData.csv"
 
 // Defining Column Names / Column Headers
-let email = "EMAIL";
+let email = "Email";
 let ucid = "UCID";
 let firstName = "FirstName";
 let lastName = "LastName";
@@ -69,7 +69,7 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
           printLabel(dymo_print_xml);
         }
         else {
-          alert('Email not found in the CSV file.');
+          alert('Identifier not found in the CSV file.');
         }
       })
       .catch(error => {

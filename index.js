@@ -1,6 +1,12 @@
 //Definenig the csv file nameMAJOR
 let csv_file_name = "./demoData.csv"
 
+// Defining Column Names / Column Headers
+let email = "EMAIL";
+let ucid = "UCID";
+let firstName = "FirstName";
+let lastName = "LastName";
+let major = "Major";
 
 
 document.getElementById('nameTagForm').addEventListener('submit', function (event) {
@@ -17,7 +23,7 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
   let test = false;
 
   if (test) {
-    console.log("this is a test");
+    console.log("This is a test");
     FIRST_NAME = "Koustubh";
     LAST_NAME = "Sahu";
     MAJOR = "Computer Science";
@@ -34,11 +40,11 @@ document.getElementById('nameTagForm').addEventListener('submit', function (even
         // Parse CSV data
         var rows = data.split('\n');
         var headers = rows[0].split(',');
-        var emailIndex = headers.indexOf('Email');
-        var ucidIndex = headers.indexOf('UCID');
-        var firstNameIndex = headers.indexOf('FirstName');
-        var lastNameIndex = headers.indexOf('LastName');
-        var majorIndex = headers.indexOf('Major');
+        var emailIndex = headers.indexOf(email);
+        var ucidIndex = headers.indexOf(ucid);
+        var firstNameIndex = headers.indexOf(firstName);
+        var lastNameIndex = headers.indexOf(lastName);
+        var majorIndex = headers.indexOf(major);
 
         // Find the row with the matching email
         var rowData;

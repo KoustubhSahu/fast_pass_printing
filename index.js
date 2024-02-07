@@ -1,106 +1,200 @@
-//Definenig the csv file nameMAJOR
-let csv_file_name = "./demoData.csv"
+// Defining the Google Sheet URL, Range and Sheet Name
+let sheet_url = "https://docs.google.com/spreadsheets/d/1uMtpLHHggEhJu0PQNo7nxt2EJM8aGsoR1U-b6uXvi2U/edit#gid=1074118215";
+let sheet_name = "demoData";
+let range;
+let total_row, total_column;
 
-// Defining Column Names / Column Headers
+// Google Sheet API Key
+const apiKey = "AIzaSyBfP4Nrdke4EMy-snQK3aFcAJMMhkRU6KU";
+
+// Defining Column Names (Column Headers)
 let email = "Email";
 let ucid = "UCID";
 let firstName = "FirstName";
 let lastName = "LastName";
 let major = "Major";
 
+var rows, headers, emailIndex, ucidIndex, firstNameIndex, lastNameIndex, majorIndex;
 
-document.getElementById('nameTagForm').addEventListener('submit', function (event) {
-  event.preventDefault();
+window.onload = async function () {
+  // Extract the spreadsheetId and sheetId from the URL
+  spreadsheetId = extractSheetInfo(sheet_url);
 
-  // Defining Variables for Name and Major
-  let FIRST_NAME = ""
-  let LAST_NAME = ""
-  let MAJOR = ""
+  const baseUrl = `https://sheets.googleapis.com/v4/spreadsheets`; // Base URL for the Google Sheets API
 
-  // Get the email input value
-  var studentIdentifier = document.getElementById('email').value.trim();
+  const general_url = `${baseUrl}/${spreadsheetId}?key=${apiKey}`;
+  console.log(general_url);
 
-  let test = false;
+  try {
+    // Requesting general data to get the number of rows and columns
+    const range_data = await SheetDataFetch(general_url);
+    console.log(range_data);
 
-  if (test) {
-    console.log("This is a test");
-    FIRST_NAME = "Koustubh";
-    LAST_NAME = "Sahu";
-    MAJOR = "Computer Science";
+    // Getting the number of rows and columns from the sheet name
+    range_data.sheets.forEach((sheet) => {
+      if (sheet.properties.title === sheet_name) {
+        total_row = sheet.properties.gridProperties.rowCount;
+        total_column = sheet.properties.gridProperties.columnCount;
+        return;
+      }
+    });
 
-    let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
-    printLabel(dymo_print_xml);
+    // Geting the range of the sheet
+    range = getSheetRange(total_row, total_column);
+
+    // Requesting the data from the sheet
+    const requestUrl = `${baseUrl}/${spreadsheetId}/values/${sheet_name}!${range}?key=${apiKey}`;
+    console.log(requestUrl);
+    // Fetching the data from the sheet
+    let data = await SheetDataFetch(requestUrl);
+
+    // Reading the sheet to get the student data
+    rows = data.values;
+    headers = rows[0];
+    emailIndex = headers.indexOf(email);
+    ucidIndex = headers.indexOf(ucid);
+    firstNameIndex = headers.indexOf(firstName);
+    lastNameIndex = headers.indexOf(lastName);
+    majorIndex = headers.indexOf(major);
+  } catch (error) {
+    console.error("Error loading data:", error);
   }
-
-  else { //start here 
-    // Read the CSV file
-    fetch(csv_file_name)
-      .then(response => response.text())
-      .then(data => {
-        // Parse CSV data
-        var rows = data.split('\n');
-        var headers = rows[0].split(',');
-        var emailIndex = headers.indexOf(email);
-        var ucidIndex = headers.indexOf(ucid);
-        var firstNameIndex = headers.indexOf(firstName);
-        var lastNameIndex = headers.indexOf(lastName);
-        var majorIndex = headers.indexOf(major);
-
-        console.log(`emailIndex = ${emailIndex} & ucidIndex = ${ucidIndex}`);
-        console.log(`length of the csv file is ${rows.length}`);
-
-        // Find the row with the matching email
-        var rowData;
-        for (var i = 1; i < rows.length; i++) {
-          var row = rows[i].split(',');
-          if ((row[emailIndex].trim() === studentIdentifier) || (row[ucidIndex].trim() === studentIdentifier)) {
-            rowData = row;
-            break;
-          }
-        }
-
-        // Print name tag if data found
-        if (rowData) {
-          FIRST_NAME = rowData[firstNameIndex];
-          LAST_NAME = rowData[lastNameIndex];
-          MAJOR = rowData[majorIndex];
-          console.log(`Fname: ${FIRST_NAME}, lName: ${LAST_NAME}, major: ${MAJOR}`);
-          let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
-          printLabel(dymo_print_xml);
-        }
-        else {
-          alert('Identifier not found in the CSV file.');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  } // ends here
+};
 
 
-});
+// Called when the user Clicks the Print button abnd submit the form
+// Checking if student data is found and then printing the name tag
+document
+  .getElementById("nameTagForm")
+  .addEventListener("submit", function (event) {
+    event.preventDefault();
 
+    // Defining Variables for Name and Major
+    let FIRST_NAME = "";
+    let LAST_NAME = "";
+    let MAJOR = "";
+
+    // Get the email input value
+    var studentIdentifier = document.getElementById("email").value.trim();
+
+    // Chekcing if the studentIdentifier is in the sheet
+    for (var i = 1; i < rows.length; i++) {
+      var row = rows[i];
+      if (
+        row[emailIndex].trim() === studentIdentifier ||
+        row[ucidIndex].trim() === studentIdentifier
+      ) {
+        rowData = row;
+        break;
+      }
+    }
+
+    // Print name tag if data found
+    if (rowData) {
+      FIRST_NAME = rowData[firstNameIndex];
+      LAST_NAME = rowData[lastNameIndex];
+      MAJOR = rowData[majorIndex];
+      console.log(`Fname: ${FIRST_NAME}, lName: ${LAST_NAME}, major: ${MAJOR}`);
+      let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
+      printLabel(dymo_print_xml);
+    }
+    // Alert if data not found
+    else {
+      alert("Identifier not found in the Sheet.");
+    }
+  });
+
+
+// Function to print the name tag
 function printLabel(xml) {
   try {
     var label = dymo.label.framework.openLabelXml(xml);
-    console.log(label)
+    console.log(label);
     var printers = dymo.label.framework.getPrinters();
     console.log(printers);
     if (printers.length === 0) {
-      alert('No DYMO printers found.');
+      alert("No DYMO printers found.");
       return;
     }
     var printerName = printers[0].name; // Use the first printer found
-    label.print(printerName, '', '');
+    label.print(printerName, "", "");
   } catch (e) {
     console.log(e);
-    alert('Error printing label: ' + e.message);
+    alert("Error printing label: " + e.message);
   }
 }
 
+// Function to get the range of the sheet
+function getSheetRange(row, column) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let columnLetter = '';
+  let quotient = column;
+
+  while (quotient > 0) {
+    let remainder = (quotient - 1) % 26;
+    console.log(remainder)
+    columnLetter = alphabet[remainder] + columnLetter;
+    console.log(columnLetter)
+    quotient = Math.floor((quotient - 1) / 26);
+  }
+
+  return `A1:${columnLetter}${row}`;
+}
+
+// Function to extract the spreadsheetId and sheetId from the URL
+function extractSheetInfo(url) {
+  // Extract the spreadsheetId
+  const spreadsheetIdMatch = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  const spreadsheetId = spreadsheetIdMatch ? spreadsheetIdMatch[1] : null;
+
+  // // Extract the sheetId
+  // const sheetIdMatch = url.match(/#gid=([0-9]+)/);
+  // const sheetId = sheetIdMatch ? sheetIdMatch[1] : null;
+
+  return spreadsheetId;
+
+}
+
+// Function to fetch the data from the Google Sheet
+async function SheetDataFetch(url) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    console.log("Data received:", data);
+    return data;
+  } catch (error) {
+    console.error("There was a problem with the fetch operation:", error);
+    throw error;
+  }
+}
+
+// function SheetDataFetch(url) {
+//   let fetch_data;
+//   fetch(url)
+//     .then((response) => {
+//       if (!response.ok) {
+//         throw new Error("Network response was not ok");
+//       }
+//       return response.json();
+//     })
+//     .then((data) => {
+//       console.log("Data received:", data);
+//       // Handle the data here
+//       fetch_data = data;
+//       return data;
+//     })
+//     .catch((error) => {
+//       console.error("There was a problem with the fetch operation:", error);
+//     });
+//     console.log("Feth data", fetch_data);
+//   return fetch_data;
+// }
 
 function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
-  let xml =  `<?xml version="1.0" encoding="utf-8"?>
+  let xml = `<?xml version="1.0" encoding="utf-8"?>
 <DesktopLabel Version="1">
   <DYMOLabel Version="3">
     <Description>DYMO Label</Description>
@@ -414,8 +508,10 @@ function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
   </DataTable>
 </DesktopLabel>`;
 
-xml = xml.replace("FIRST_NAME", FIRST_NAME).replace("LAST_NAME", LAST_NAME).replace("MAJOR", MAJOR);
+  xml = xml
+    .replace("FIRST_NAME", FIRST_NAME)
+    .replace("LAST_NAME", LAST_NAME)
+    .replace("MAJOR", MAJOR);
 
-return xml;
-
+  return xml;
 }

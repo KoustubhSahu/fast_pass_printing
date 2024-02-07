@@ -23,12 +23,10 @@ window.onload = async function () {
   const baseUrl = `https://sheets.googleapis.com/v4/spreadsheets`; // Base URL for the Google Sheets API
 
   const general_url = `${baseUrl}/${spreadsheetId}?key=${apiKey}`;
-  console.log(general_url);
 
   try {
     // Requesting general data to get the number of rows and columns
     const range_data = await SheetDataFetch(general_url);
-    console.log(range_data);
 
     // Getting the number of rows and columns from the sheet name
     range_data.sheets.forEach((sheet) => {
@@ -44,7 +42,6 @@ window.onload = async function () {
 
     // Requesting the data from the sheet
     const requestUrl = `${baseUrl}/${spreadsheetId}/values/${sheet_name}!${range}?key=${apiKey}`;
-    console.log(requestUrl);
     // Fetching the data from the sheet
     let data = await SheetDataFetch(requestUrl);
 
@@ -76,7 +73,7 @@ document
 
     // Get the email input value
     var studentIdentifier = document.getElementById("email").value.trim();
-
+    let rowData = null;
     // Chekcing if the studentIdentifier is in the sheet
     for (var i = 1; i < rows.length; i++) {
       var row = rows[i];
@@ -85,6 +82,8 @@ document
         row[ucidIndex].trim() === studentIdentifier
       ) {
         rowData = row;
+        console.log(rowData);
+        console.log(studentIdentifier);
         break;
       }
     }
@@ -132,9 +131,7 @@ function getSheetRange(row, column) {
 
   while (quotient > 0) {
     let remainder = (quotient - 1) % 26;
-    console.log(remainder)
     columnLetter = alphabet[remainder] + columnLetter;
-    console.log(columnLetter)
     quotient = Math.floor((quotient - 1) / 26);
   }
 
@@ -163,7 +160,7 @@ async function SheetDataFetch(url) {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-    console.log("Data received:", data);
+    // console.log("Data received:", data);
     return data;
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);

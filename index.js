@@ -101,7 +101,7 @@ document
     }
     // Alert if data not found
     else {
-      alert("Identifier not found in the Sheet.");
+      alert("The student does not qualify for a Fast-Pass. \nPlease check the Email Address or UCID and try again");
     }
   });
 

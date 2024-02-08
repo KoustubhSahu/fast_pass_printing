@@ -13,14 +13,20 @@ let ucid = "Username";
 let firstName = "First Name";
 let lastName = "Last Name";
 let major = "Majors";
+let pick_up = "Fast-Pass Pick Up";
 
-var rows, headers, emailIndex, ucidIndex, firstNameIndex, lastNameIndex, majorIndex;
+let pick_up_indicator = "yes"; // to write in pick_up column
+
+var rows, headers, emailIndex, ucidIndex, firstNameIndex, lastNameIndex, majorIndex, pickUpIndex;
+
+// Base URL for the Google Sheets API\
+const baseUrl = `https://sheets.googleapis.com/v4/spreadsheets`; 
 
 window.onload = async function () {
   // Extract the spreadsheetId and sheetId from the URL
   spreadsheetId = extractSheetInfo(sheet_url);
 
-  const baseUrl = `https://sheets.googleapis.com/v4/spreadsheets`; // Base URL for the Google Sheets API
+  
 
   const general_url = `${baseUrl}/${spreadsheetId}?key=${apiKey}`;
 
@@ -38,7 +44,7 @@ window.onload = async function () {
     });
 
     // Geting the range of the sheet
-    range = getSheetRange(total_row, total_column);
+    range = getSheetRange(total_column, total_row);
 
     // Requesting the data from the sheet
     const requestUrl = `${baseUrl}/${spreadsheetId}/values/${sheet_name}!${range}?key=${apiKey}`;
@@ -53,6 +59,8 @@ window.onload = async function () {
     firstNameIndex = headers.indexOf(firstName);
     lastNameIndex = headers.indexOf(lastName);
     majorIndex = headers.indexOf(major);
+    pickUpIndex = headers.indexOf(pick_up);
+    console.log(`Pick up index = ${pickUpIndex}`);
   } catch (error) {
     console.error("Error loading data:", error);
   }
@@ -77,16 +85,24 @@ document
     // Chekcing if the studentIdentifier is in the sheet
     for (var i = 1; i < rows.length; i++) {
       var row = rows[i];
+      console.log(row);
       if (
-        row[emailIndex].trim() === studentIdentifier ||
-        row[ucidIndex].trim() === studentIdentifier
+        (row[emailIndex] !== "") &&        
+        (row[emailIndex].trim() === studentIdentifier ||
+        row[ucidIndex].trim() === studentIdentifier)
       ) {
-        rowData = row;
+        
         console.log(rowData);
         console.log(studentIdentifier);
+        // Marking the record as picked up
+        row[pickUpIndex] = pick_up_indicator;
+        rowData = row;
+        // updateSheet(rowData, i+1);
+        console.log(rowData);
         break;
       }
     }
+
 
     // Print name tag if data found
     if (rowData) {
@@ -104,6 +120,31 @@ document
       alert("The student does not qualify for a Fast-Pass. \nPlease check the Email Address or UCID and try again");
     }
   });
+
+// // Fucntion to update teh row in the Google Sheet
+// function updateSheet(rowData, rowIndex) {
+//   let update_range = getSheetRange(rowIndex, rowData.length, true);
+//   // update_range = `${update_range}1:${update_range}${rowData.length}`
+//   console.log(update_range);
+//   const updateUrl = `${baseUrl}/${spreadsheetId}/values/${sheet_name}!${update_range}?valueInputOption=RAW&key=${apiKey}`;
+//   const updateData = {
+//     values: rowData,
+//   };
+//   fetch(updateUrl, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(updateData),
+//   })
+//     .then((response) => response.json())
+//     .then((data) => {
+//       console.log("Success:", data);
+//     })
+//     .catch((error) => {
+//       console.error("Error:", error);
+//     });
+// }
 
 
 // Function to print the name tag
@@ -125,19 +166,31 @@ function printLabel(xml) {
   }
 }
 
+
 // Function to get the range of the sheet
-function getSheetRange(row, column) {
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let columnLetter = '';
-  let quotient = column;
-
-  while (quotient > 0) {
-    let remainder = (quotient - 1) % 26;
-    columnLetter = alphabet[remainder] + columnLetter;
-    quotient = Math.floor((quotient - 1) / 26);
+function getSheetRange(column, row, cellRange=false) {
+  if (cellRange) {
+    // Convert column number to Excel-style letter
+    const columnLetter = String.fromCharCode(65 + column - 1);
+    
+    // Construct range in Excel-style notation
+    const startCell = `${columnLetter}1`;
+    const endCell = `${columnLetter}${row}`;
+    const range = `${startCell}:${endCell}`;
+    return range;
   }
+  else {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let columnLetter = '';
+    let quotient = column;
 
-  return `A1:${columnLetter}${row}`;
+    while (quotient > 0) {
+      let remainder = (quotient - 1) % 26;
+      columnLetter = alphabet[remainder] + columnLetter;
+      quotient = Math.floor((quotient - 1) / 26);
+    }
+    return `A1:${columnLetter}${row}`;
+  }
 }
 
 // Function to extract the spreadsheetId and sheetId from the URL

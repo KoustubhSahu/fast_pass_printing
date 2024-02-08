@@ -1,6 +1,6 @@
 // Defining the Google Sheet URL, Range and Sheet Name
-let sheet_url = "https://docs.google.com/spreadsheets/d/1uMtpLHHggEhJu0PQNo7nxt2EJM8aGsoR1U-b6uXvi2U/edit#gid=1074118215";
-let sheet_name = "demoData";
+let sheet_url = "https://docs.google.com/spreadsheets/d/1faXLXqZoizdMj6OAFkfDBDecdk7a7Zci1mJHCKONKJ0/edit#gid=0";
+let sheet_name = "Sheet1";
 let range;
 let total_row, total_column;
 
@@ -8,11 +8,11 @@ let total_row, total_column;
 const apiKey = "AIzaSyBfP4Nrdke4EMy-snQK3aFcAJMMhkRU6KU";
 
 // Defining Column Names (Column Headers)
-let email = "Email";
-let ucid = "UCID";
-let firstName = "FirstName";
-let lastName = "LastName";
-let major = "Major";
+let email = "Email Address";
+let ucid = "Username";
+let firstName = "First Name";
+let lastName = "Last Name";
+let major = "Majors";
 
 var rows, headers, emailIndex, ucidIndex, firstNameIndex, lastNameIndex, majorIndex;
 
@@ -93,9 +93,11 @@ document
       FIRST_NAME = rowData[firstNameIndex];
       LAST_NAME = rowData[lastNameIndex];
       MAJOR = rowData[majorIndex];
-      console.log(`Fname: ${FIRST_NAME}, lName: ${LAST_NAME}, major: ${MAJOR}`);
-      let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR);
-      printLabel(dymo_print_xml);
+      // console.log(`Fname: ${FIRST_NAME}, lName: ${LAST_NAME}, major: ${MAJOR}`);
+      let dymo_print_xml = getXML(FIRST_NAME, LAST_NAME, MAJOR); // getting the xml
+      printLabel(dymo_print_xml); // Printing the label
+      document.getElementById("email").value = ""; // Cleraring the Input field after a successfull print
+
     }
     // Alert if data not found
     else {
@@ -168,27 +170,6 @@ async function SheetDataFetch(url) {
   }
 }
 
-// function SheetDataFetch(url) {
-//   let fetch_data;
-//   fetch(url)
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error("Network response was not ok");
-//       }
-//       return response.json();
-//     })
-//     .then((data) => {
-//       console.log("Data received:", data);
-//       // Handle the data here
-//       fetch_data = data;
-//       return data;
-//     })
-//     .catch((error) => {
-//       console.error("There was a problem with the fetch operation:", error);
-//     });
-//     console.log("Feth data", fetch_data);
-//   return fetch_data;
-// }
 
 function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
   let xml = `<?xml version="1.0" encoding="utf-8"?>
@@ -505,6 +486,7 @@ function getXML(FIRST_NAME, LAST_NAME, MAJOR) {
   </DataTable>
 </DesktopLabel>`;
 
+  MAJOR = MAJOR.replace(/&/g, "&amp;"); // Escape ampersand in MAJOR variable to avoid xml error
   xml = xml
     .replace("FIRST_NAME", FIRST_NAME)
     .replace("LAST_NAME", LAST_NAME)
